@@ -34,7 +34,7 @@ solve = \year, solution ->
 
 formatDuration : Utc.Utc, Utc.Utc -> Str
 formatDuration = \start, end ->
-    nanos = Utc.deltaAsNanos start end
+    nanos = deltaAsNanos start end
 
     if nanos > 1_000_000 then
         millis = Num.divCeil nanos 1_000_000
@@ -44,6 +44,15 @@ formatDuration = \start, end ->
         "$(Num.toStr micros)μs"
     else
         "$(Num.toStr nanos)ns"
+
+# Implementing directly using U64 since there seem to be compiler bugs with 128-bit integers
+# Even only using 64-bit integers, there's no risk of overflowing for several hundred years
+deltaAsNanos : Utc.Utc, Utc.Utc -> U64
+deltaAsNanos = \start, end ->
+    startNanos = Num.toU64 (Utc.toNanosSinceEpoch start)
+    endNanos = Num.toU64 (Utc.toNanosSinceEpoch end)
+
+    Num.absDiff startNanos endNanos
 
 Puzzle : { year : U16, day : U8 }
 
