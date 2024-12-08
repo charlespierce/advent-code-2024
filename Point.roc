@@ -2,8 +2,10 @@ module [
     Direction,
     Point,
     allDirections,
+    fromIndex,
     shift,
     diff,
+    sum,
     negate,
 ]
 
@@ -13,6 +15,12 @@ allDirections : List Direction
 allDirections = [UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight]
 
 Point : { x : I64, y : I64 }
+
+fromIndex : { x : U64, y : U64 } -> Point
+fromIndex = \{ x: ux, y: uy } -> {
+    x: Num.toI64 ux,
+    y: Num.toI64 uy,
+}
 
 shift : Point, Direction -> Point
 shift = \{ x, y }, dir ->
@@ -30,6 +38,12 @@ diff : Point, Point -> Point
 diff = \point1, point2 -> {
     x: point1.x - point2.x,
     y: point1.y - point2.y,
+}
+
+sum : Point, Point -> Point
+sum = \point1, point2 -> {
+    x: point1.x + point2.x,
+    y: point1.y + point2.y,
 }
 
 negate : Point -> Point
