@@ -3,6 +3,7 @@ module [solution]
 solution = { day: 4, part1, part2 }
 
 import Grid
+import Point
 
 part1 : Str -> _
 part1 = \input ->
@@ -10,7 +11,7 @@ part1 = \input ->
     restChars = Str.toUtf8 "MAS"
 
     grid = parse input
-    
+
     Grid.walkWithPoint grid 0 \count, char, point ->
         if char == firstChar then
             count + countMatchesAt grid point restChars
@@ -39,17 +40,17 @@ parse = \input ->
     |> Str.splitOn "\n"
     |> List.map Str.toUtf8
 
-isXPattern : Grid.Grid U8, Grid.Point, (U8, U8) -> Bool
+isXPattern : Grid.Grid U8, Point.Point, (U8, U8) -> Bool
 isXPattern = \grid, point, expectedPair ->
     isXPatternInner grid point expectedPair
     |> Result.isOk
 
-isXPatternInner : Grid.Grid U8, Grid.Point, (U8, U8) -> Result {} _
+isXPatternInner : Grid.Grid U8, Point.Point, (U8, U8) -> Result {} _
 isXPatternInner = \grid, point, expectedPair ->
-    upLeft = Grid.get? grid (Grid.shiftPoint point UpLeft)
-    upRight = Grid.get? grid (Grid.shiftPoint point UpRight)
-    downLeft = Grid.get? grid (Grid.shiftPoint point DownLeft)
-    downRight = Grid.get? grid (Grid.shiftPoint point DownRight)
+    upLeft = Grid.get? grid (Point.shift point UpLeft)
+    upRight = Grid.get? grid (Point.shift point UpRight)
+    downLeft = Grid.get? grid (Point.shift point DownLeft)
+    downRight = Grid.get? grid (Point.shift point DownRight)
 
     firstPairMatches = pairMatches expectedPair (upLeft, downRight)
     secondPairMatches = pairMatches expectedPair (upRight, downLeft)
@@ -63,23 +64,23 @@ pairMatches : (U8, U8), (U8, U8) -> Bool
 pairMatches = \a, b ->
     (a.0 == b.0 && a.1 == b.1) || (a.0 == b.1 && a.1 == b.0)
 
-countMatchesAt : Grid.Grid U8, Grid.Point, List U8 -> U64
+countMatchesAt : Grid.Grid U8, Point.Point, List U8 -> U64
 countMatchesAt = \grid, start, chars ->
-    Grid.allDirections
+    Point.allDirections
     |> List.keepIf (\direction -> matchWord grid start direction chars)
     |> List.len
 
-matchWord : Grid.Grid U8, Grid.Point, Grid.Direction, List U8 -> Bool
+matchWord : Grid.Grid U8, Point.Point, Point.Direction, List U8 -> Bool
 matchWord = \grid, start, direction, chars ->
     matchWordInner grid start direction chars
     |> Result.isOk
 
-matchWordInner : Grid.Grid U8, Grid.Point, Grid.Direction, List U8 -> Result {} _
+matchWordInner : Grid.Grid U8, Point.Point, Point.Direction, List U8 -> Result {} _
 matchWordInner = \grid, start, direction, chars ->
     when chars is
         [] -> Ok {}
         [next, .. as rest] ->
-            nextPoint = Grid.shiftPoint start direction
+            nextPoint = Point.shift start direction
             value = Grid.get? grid nextPoint
 
             if value == next then

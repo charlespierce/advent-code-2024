@@ -1,32 +1,11 @@
 module [
-    Direction,
-    Point,
     Grid,
-    allDirections,
-    shiftPoint,
     get,
     set,
     walkWithPoint,
 ]
 
-Direction : [UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight]
-
-allDirections : List Direction
-allDirections = [UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight]
-
-Point : { x : I64, y : I64 }
-
-shiftPoint : Point, Direction -> Point
-shiftPoint = \{ x, y }, dir ->
-    when dir is
-        UpLeft -> { x: x - 1, y: y - 1 }
-        Up -> { x, y: y - 1 }
-        UpRight -> { x: x + 1, y: y - 1 }
-        Left -> { x: x - 1, y }
-        Right -> { x: x + 1, y }
-        DownLeft -> { x: x - 1, y: y + 1 }
-        Down -> { x, y: y + 1 }
-        DownRight -> { x: x + 1, y: y + 1 }
+import Point exposing [Point]
 
 Grid a : List (List a)
 

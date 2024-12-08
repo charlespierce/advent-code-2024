@@ -3,6 +3,7 @@ module [solution]
 solution = { day: 6, part1, part2 }
 
 import Grid
+import Point
 
 part1 : Str -> _
 part1 = \input ->
@@ -30,13 +31,13 @@ part2 = \input ->
 
 Tile : [Open, Blocked]
 
-parse : Str -> (Grid.Grid Tile, Grid.Point)
+parse : Str -> (Grid.Grid Tile, Point.Point)
 parse = \input ->
     Str.trim input
     |> Str.splitOn "\n"
     |> List.walkWithIndex ([], { x: 0, y: 0 }) parseLine
 
-parseLine : (Grid.Grid Tile, Grid.Point), Str, U64 -> (Grid.Grid Tile, Grid.Point)
+parseLine : (Grid.Grid Tile, Point.Point), Str, U64 -> (Grid.Grid Tile, Point.Point)
 parseLine = \(grid, start), line, y ->
     (gridLine, newStart) =
         Str.toUtf8 line
@@ -48,7 +49,7 @@ parseLine = \(grid, start), line, y ->
                 _ -> crash "Unreachable"
     (List.append grid gridLine, newStart)
 
-checkLoopWithNewObstruction : Grid.Point, Guard, Grid.Grid Tile -> Bool
+checkLoopWithNewObstruction : Point.Point, Guard, Grid.Grid Tile -> Bool
 checkLoopWithNewObstruction = \obstruction, guard, grid ->
     newGrid = Grid.set grid obstruction Blocked
 
@@ -68,12 +69,12 @@ determinePath = \guard, grid, visited ->
 
 moveGuard : Guard, Grid.Grid Tile -> Result Guard [OutOfBounds]
 moveGuard = \guard, grid ->
-    newPosition = Grid.shiftPoint (position guard) (direction guard)
+    newPosition = Point.shift (position guard) (direction guard)
     when Grid.get? grid newPosition is
         Open -> Ok (withPosition guard newPosition)
         Blocked -> moveGuard (withDirection guard (turnRight (direction guard))) grid
 
-turnRight : Grid.Direction -> Grid.Direction
+turnRight : Point.Direction -> Point.Direction
 turnRight = \dir ->
     when dir is
         Up -> Right
@@ -82,19 +83,19 @@ turnRight = \dir ->
         Left -> Up
         _ -> crash "Unreachable"
 
-Guard := { position : Grid.Point, direction : Grid.Direction } implements [Eq, Hash]
+Guard := { position : Point.Point, direction : Point.Direction } implements [Eq, Hash]
 
-position : Guard -> Grid.Point
+position : Guard -> Point.Point
 position = \@Guard guard -> guard.position
 
-direction : Guard -> Grid.Direction
+direction : Guard -> Point.Direction
 direction = \@Guard guard -> guard.direction
 
-withDirection : Guard, Grid.Direction -> Guard
+withDirection : Guard, Point.Direction -> Guard
 withDirection = \@Guard guard, newDirection ->
     @Guard { guard & direction: newDirection }
 
-withPosition : Guard, Grid.Point -> Guard
+withPosition : Guard, Point.Point -> Guard
 withPosition = \@Guard guard, newPosition ->
     @Guard { guard & position: newPosition }
 
