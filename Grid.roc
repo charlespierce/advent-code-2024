@@ -5,6 +5,7 @@ module [
     allDirections,
     shiftPoint,
     get,
+    set,
     walkWithPoint,
 ]
 
@@ -35,9 +36,19 @@ get = \grid, point ->
     y = toU64? point.y
 
     grid
-    |> List.get? y
-    |> List.get? x
-    |> Ok
+        |> List.get? y
+        |> List.get? x
+        |> Ok
+
+set : Grid a, Point, a -> Grid a
+set = \grid, point, value ->
+    when toU64 point.y is
+        Err _ -> grid
+        Ok y ->
+            List.update grid y \row ->
+                when toU64 point.x is
+                    Err _ -> row
+                    Ok x -> List.set row x value
 
 walkWithPoint : Grid a, state, (state, a, Point -> state) -> state
 walkWithPoint = \grid, initial, func ->
