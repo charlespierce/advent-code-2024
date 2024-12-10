@@ -2,6 +2,7 @@ module [
     Direction,
     Point,
     allDirections,
+    cardinalDirections,
     fromIndex,
     shift,
     diff,
@@ -13,6 +14,9 @@ Direction : [UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight]
 
 allDirections : List Direction
 allDirections = [UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight]
+
+cardinalDirections : List Direction
+cardinalDirections = [Up, Left, Right, Down]
 
 Point : { x : I64, y : I64 }
 
