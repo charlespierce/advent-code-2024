@@ -10,6 +10,8 @@ module [
     many,
     many1,
     delimited,
+    pair,
+    triple,
     separatedPair,
     digit,
     number,
@@ -82,6 +84,23 @@ delimited = \opening, value, closing ->
         (_, rest3) = closing? rest2
 
         Ok (output, rest3)
+
+pair : Parser output1, Parser output2 -> Parser (output1, output2)
+pair = \first, second ->
+    \input ->
+        (firstValue, rest) = first? input
+        (secondValue, rest2) = second? rest
+
+        Ok ((firstValue, secondValue), rest2)
+
+triple : Parser output1, Parser output2, Parser output3 -> Parser (output1, output2, output3)
+triple = \first, second, third ->
+    \input ->
+        (firstValue, rest) = first? input
+        (secondValue, rest2) = second? rest
+        (thirdValue, rest3) = third? rest2
+
+        Ok ((firstValue, secondValue, thirdValue), rest3)
 
 separatedPair : Parser output1, Parser _, Parser output2 -> Parser (output1, output2)
 separatedPair = \first, separator, second ->
