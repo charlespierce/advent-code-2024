@@ -15,6 +15,7 @@ module [
     separatedPair,
     digit,
     number,
+    signed,
     any,
     anyVal,
     map,
@@ -126,6 +127,19 @@ number = \input ->
     value = List.walk digits 0 \total, d -> total * 10 + d
 
     Ok (value, rest)
+
+signed : Parser I64
+signed = \input ->
+    (sign, rest) =
+        when (tag "-") input is
+            Ok (_, left) -> (-1, left)
+            Err _ -> (1, input)
+
+    (unsigned, rest2) = number? rest
+
+    value = sign * (Num.toI64 unsigned)
+
+    Ok (value, rest2)
 
 any : Parser U8
 any = \input ->
