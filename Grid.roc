@@ -2,6 +2,8 @@ module [
     Grid,
     get,
     set,
+    width,
+    height,
     walkWithPoint,
 ]
 
@@ -28,6 +30,15 @@ set = \grid, point, value ->
                 when toU64 point.x is
                     Err _ -> row
                     Ok x -> List.set row x value
+
+height : Grid a -> U64
+height = \grid -> List.len grid
+
+width : Grid a -> U64
+width = \grid ->
+    List.get grid 0
+    |> Result.map List.len
+    |> Result.withDefault 0
 
 walkWithPoint : Grid a, state, (state, a, Point -> state) -> state
 walkWithPoint = \grid, initial, func ->
