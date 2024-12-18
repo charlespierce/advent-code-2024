@@ -9,6 +9,7 @@ module [
     oneOf,
     many,
     many1,
+    separatedList,
     delimited,
     pair,
     triple,
@@ -76,6 +77,16 @@ many1 = \parser ->
     \input ->
         (first, rest) = parser? input
         manyInner [first] rest parser
+
+separatedList : Parser output, Parser _ -> Parser (List output)
+separatedList = \item, separator ->
+    \input ->
+        combined =
+            pair separator item
+            |> map .1
+
+        (first, rest) = item? input
+        manyInner [first] rest combined
 
 delimited : Parser _, Parser output, Parser _ -> Parser output
 delimited = \opening, value, closing ->
