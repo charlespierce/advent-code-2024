@@ -17,6 +17,7 @@ module [
     digit,
     number,
     signed,
+    alphaNum,
     any,
     anyVal,
     map,
@@ -151,6 +152,15 @@ signed = \input ->
     value = sign * (Num.toI64 unsigned)
 
     Ok (value, rest2)
+
+alphaNum : Parser U8
+alphaNum = \input ->
+    when input is
+        [] -> Err (ParseError "Unexpected EOF")
+        [first, .. as rest] if ('0' <= first && first <= '9') || ('a' <= first && first <= 'z') || ('A' <= first && first <= 'Z') ->
+            Ok (first, rest)
+
+        _ -> Err (ParseError "Not an alphanumeric character")
 
 any : Parser U8
 any = \input ->
